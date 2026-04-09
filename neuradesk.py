@@ -10,6 +10,11 @@
 # step 5 install git -- https://git-scm.com/downloads
 
 # step 6 install ollama -- https://ollama.com/docs/installation
+# ollama list -- to check if the installation was successful
+#ollama pull llama3 -- to pull the llama3 model to your local machine
+#ollama run llama3 -- to run the model and check if it's working properly
+#ollama rm llama3 -- to remove the model from your local machine if you want to free up space
+
 
 #install the required libraries for the project
 
@@ -44,3 +49,45 @@ Later you can:
     switch models easily
     add API keys
     deploy safely    '''
+
+
+# freeze the dependencies in a requirements.txt file -pip freeze > requirements.txt
+
+#Add this content:
+'''
+# Virtual environment
+venv/
+
+# Environment variables (secrets)
+.env
+'''
+#git init -- to initialize a git repository in your project folder
+#git add . -- to stage all the files for commit 
+'''Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"'''
+#git commit -m "Initial commit" -- to commit the staged files with a message
+#git remote add origin <https://github.com/tejaschechar/GPT_PRO_FREE> -- to link your local repository to a remote repository on GitHub
+#git pull origin main -- to pull any changes from the remote repository before pushing your commits
+#git push -u origin main -- to push your commits to the remote repository on GitHub
+#git status -- to check the status of your repository and see which files are staged, unstaged, or untracked
+#git log -- to view the commit history of your repository
+#git branch -- to check which branch you are currently on
+#git checkout -b <branch-name> -- to create and switch to a new branch for
+
+#phase 1
+# model router integrated
+#Unified LLM interface
+#Multi-model support (phi3, llama3)
+#Auto + manual model selection
+# Clean modular code
+
+''' 
+llm/
+ ├── model_router.py
+ ├── ollama_client.py
+ └── prompt_builder.py
+
+tests/
+ └── test_llm.py '''
