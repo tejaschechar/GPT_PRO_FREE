@@ -95,14 +95,18 @@ Structured Output:
 
 def evaluate_answer(query, answer):
     prompt = f"""
-Rate this answer from 1-10 based on accuracy.
+Rate this answer from 1-10 based on:
+
+- factual accuracy
+- completeness
+- clarity
+
+Only return a number.
 
 Question:
 {query}
 
 Answer:
 {answer}
-
-Score only:
-"""
+    """
     return generate_response("mistral:latest", prompt)

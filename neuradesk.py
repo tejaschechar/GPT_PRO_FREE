@@ -82,12 +82,32 @@ venv/
 #Multi-model support (phi3, llama3)
 #Auto + manual model selection
 # Clean modular code
+#multi model pipeline with draft, refine, critic steps
+# Basic error handling with fallback
 
 ''' 
 llm/
  ├── model_router.py
  ├── ollama_client.py
  └── prompt_builder.py
+ |__ multi_model_pipeline.py
 
 tests/
  └── test_llm.py '''
+
+
+#Phase 2
+#Internet search
+#Math pipeline
+#Multi-model routing
+#Context-aware answers
+#allucination reduction
+
+'''
+tools/
+ ├── search.py
+ ├── math_solver.py
+
+services/
+ ├── context_builder.py
+'''
