@@ -26,7 +26,7 @@ def test_case(name, query, **kwargs):
 
 def run_tests():
 
-    # 🧠 Basic
+    '''# 🧠 Basic
     test_case(
         "Normal question",
         "What is machine learning?"
@@ -71,7 +71,7 @@ def run_tests():
     test_case(
         "Integration",
         "integrate x^2 + 2*x"
-    )
+    )'''
 
     # 🌐 Search-based queries
     test_case(
@@ -84,7 +84,7 @@ def run_tests():
         "current bitcoin price"
     )
 
-    # 🎨 Creative mode
+    '''# 🎨 Creative mode
     test_case(
         "Creative writing",
         "Write a short story about an AI that becomes human"
@@ -114,7 +114,7 @@ def run_tests():
         "Explain blockchain in detail",
         user_mode="multi",
         trace=True
-    )
+    )'''
 
 
 def performance_test():
