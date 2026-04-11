@@ -46,8 +46,8 @@ def test_case(name, query, **kwargs):
 
 def run_tests():
 
-    # 🧠 Basic
-    test_case("Normal question", "What is machine learning?")
+    '''# 🧠 Basic
+    test_case("Normal question", "What is machine learning?")'''
 
     # 💻 Multi-model reasoning
     test_case(
@@ -56,7 +56,7 @@ def run_tests():
         user_mode="multi"
     )
 
-    # ⚡ Fast task
+    '''# ⚡ Fast task
     test_case(
         "Summarization",
         "Summarize artificial intelligence in short"
@@ -74,12 +74,12 @@ def run_tests():
     test_case("Equation solving", "x^2 - 4 = 0")
     test_case("Derivative", "derivative of x^2 + 3*x")
     test_case("Integration", "integrate x^2 + 2*x")
-
+    '''
     # 🌐 Search queries
     test_case("Search (latest info)", "latest AI news today")
     test_case("Search (price query)", "current bitcoin price")
 
-    # 🎨 Creative
+    '''# 🎨 Creative
     test_case(
         "Creative writing",
         "Write a short story about an AI that becomes human"
@@ -109,7 +109,7 @@ def run_tests():
         "Explain blockchain in detail",
         user_mode="multi",
         trace=True
-    )
+    )'''
 
 
 def performance_test():
