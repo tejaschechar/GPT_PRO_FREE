@@ -1,10 +1,13 @@
-from llm.multi_model_pipeline import multi_model_answer, creative_pipeline
+import re
+
+from llm.multi_model_pipeline import multi_model_answer, creative_pipeline, evaluate_answer
 from llm.ollama_client import generate_response
 from llm.prompt_builder import build_prompt
-from llm.multi_model_pipeline import evaluate_answer
 from services.context_builder import build_context
 from tools.math_solver import solve_math
-import re
+
+# 🧠 PHASE 3 MEMORY
+from memory.memory_manager import get_memory, save_memory
 
 
 MODEL_MAP = {
@@ -18,25 +21,20 @@ MODEL_MAP = {
 def parse_score(text: str) -> int:
     try:
         match = re.search(r"\d+", text)
-        if match:
-            return int(match.group())
+        return int(match.group()) if match else 5
     except:
-        pass
-    return 5
-
+        return 5
 
 
 def should_search(query: str) -> bool:
     q = query.lower()
 
-    # 🔹 High-signal keywords
     keywords = [
         "latest", "news", "today", "current",
         "price", "stock", "crypto", "market",
         "2024", "2025", "recent", "update"
     ]
 
-    # 🔹 Pattern-based triggers
     patterns = [
         r"\b(today|now|currently)\b",
         r"\bprice of\b",
@@ -44,19 +42,15 @@ def should_search(query: str) -> bool:
         r"\bwho is\b.*\b(current|now)\b"
     ]
 
-    if any(k in q for k in keywords):
-        return True
+    return any(k in q for k in keywords) or any(re.search(p, q) for p in patterns)
 
-    if any(re.search(p, q) for p in patterns):
-        return True
-
-    return False
 
 def summarize_context(context):
     return generate_response(
         "mistral:latest",
         f"Summarize this information clearly:\n{context}"
     )
+
 
 def detect_task(query: str, user_mode="auto") -> str:
     q = query.lower()
@@ -67,112 +61,128 @@ def detect_task(query: str, user_mode="auto") -> str:
     if any(k in q for k in ["story", "write", "imagine", "creative"]):
         return "creative"
 
-    elif any(k in q for k in ["code", "python", "algorithm", "leetcode"]):
+    if any(k in q for k in ["code", "python", "algorithm", "leetcode"]):
         return "reasoning"
 
-    elif any(k in q for k in ["summarize", "short", "brief"]):
+    if any(k in q for k in ["summarize", "short", "brief"]):
         return "fast"
 
-    elif any(k in q for k in ["explain deeply", "in detail", "why"]):
+    if any(k in q for k in ["explain deeply", "in detail", "why"]):
         return "reasoning"
 
     return "default"
+
 
 def is_math_query(query: str) -> bool:
     return any(sym in query for sym in ["+", "-", "*", "/", "="]) or "solve" in query.lower()
 
 
-def route_query(query: str, user_model: str = None, user_mode="auto", trace=False) -> str:
+def route_query(query: str, user_model: str = None, user_mode="auto", trace=False):
 
     print(f"\n[ROUTER] Query: {query}")
 
-    # 🔹 Manual model override
+    # 🧠 MEMORY
+    memory = get_memory(query)
+    if memory:
+        print("[ROUTER] Memory used")
+
+    # 🔹 override
     if user_model and user_model != "auto":
-        prompt = build_prompt(query, "default")
-        return generate_response(user_model, prompt)
+        prompt = build_prompt(query, "default", context=memory)
+        answer = generate_response(user_model, prompt)
+        save_memory(query, answer)
+        return answer
 
     task_type = detect_task(query, user_mode)
     print(f"[ROUTER] Task: {task_type}")
 
     try:
-        # 🧮 1. Math handling (optimized)
-        if is_math_query(query):
-            math_result = solve_math(query)
 
-            if math_result:
+        # 🧮 MATH FIRST
+        if is_math_query(query):
+            result = solve_math(query)
+
+            if result:
                 explanation = generate_response(
                     "llama3:8b-instruct-q4_0",
-                    f"""
-Explain this step-by-step clearly:
-
-Query:
-{query}
-
-Result:
-{math_result}
-"""
+                    f"Explain step-by-step:\n{query}\nResult: {result}"
                 )
-                return f"{math_result}\n\nExplanation:\n{explanation}"
 
-        # 🧠 2. Multi-model mode
+                final = f"{result}\n\nExplanation:\n{explanation}"
+                save_memory(query, final)
+                return final
+
+        # 🧠 SPECIAL PIPELINES
         if task_type == "multi":
-            return multi_model_answer(query, trace=trace)
+            answer = multi_model_answer(query, trace=trace)
+            save_memory(query, answer)
+            return answer
 
-        # 🎨 3. Creative mode
         if task_type == "creative":
-            return creative_pipeline(query)
+            answer = creative_pipeline(query)
+            save_memory(query, answer)
+            return answer
 
-        # 🌐 4. Search decision
+        # 🌐 SEARCH
         use_search = should_search(query)
         print(f"[ROUTER] Search used: {use_search}")
 
-        context = ""
+        search_context = ""
         if use_search:
-            context = build_context(query, use_search=True)
+            search_context = build_context(query, use_search=True)
 
-        # 🧠 5. Context summarization + trimming
-        if context and "No external context" not in context:
-            context = summarize_context(context)
-            context = context[:1000]  # limit size
-        else:
-            context = ""
+        # 🧠 FINAL CONTEXT BUILD (IMPORTANT FIX)
+        final_context_parts = []
 
-        # 🧠 6. Context-aware model selection
-        if context:
-            model_name = "llama3:8b-instruct-q4_0"
-        else:
-            model_name = MODEL_MAP.get(task_type, MODEL_MAP["default"])
+        if memory:
+            final_context_parts.append(f"PAST MEMORY:\n{memory}")
+
+        if search_context:
+            final_context_parts.append(f"SOURCES:\n{search_context}")
+
+        context = "\n\n".join(final_context_parts)
+
+        # ⚡ DO NOT SUMMARIZE HERE ❌
+
+        model_name = (
+            "llama3:8b-instruct-q4_0"
+            if context
+            else MODEL_MAP.get(task_type, MODEL_MAP["default"])
+        )
 
         print(f"[ROUTER] Using model: {model_name}")
 
-        # 🧠 7. Generate answer
         prompt = build_prompt(query, task_type, context=context)
         answer = generate_response(model_name, prompt)
 
-        # 🚨 8. Hallucination safety check
+        # 🚨 fallback
         if "i don't know" in answer.lower():
-            print("[ROUTER] Model uncertain → fallback multi-model")
-            return multi_model_answer(query)
+            print("[ROUTER] fallback triggered")
+            answer = multi_model_answer(query, trace=trace)
 
-        # ⚡ Skip evaluation for fast tasks
-        if task_type == "fast":
-            return answer
+        # ⚡ evaluation
+        if task_type != "fast":
+            score_text = evaluate_answer(query, answer)
+            score = parse_score(score_text)
 
-        # 🧠 9. Evaluation
-        score_text = evaluate_answer(query, answer)
-        score = parse_score(score_text)
+            print(f"[ROUTER] Score: {score}")
 
-        print(f"[ROUTER] Score: {score}")
+            if score < 6 and user_mode != "multi":
+                print("[ROUTER] low confidence fallback")
+                answer = multi_model_answer(query, trace=trace)
 
-        if score < 6 and user_mode != "multi":
-            print("[ROUTER] Low confidence → multi-model fallback")
-            return multi_model_answer(query)
+        # 💾 SAVE MEMORY
+        save_memory(query, answer)
 
         return answer
 
     except Exception as e:
         print("[ROUTER ERROR]:", e)
-        return generate_response(
+
+        fallback = generate_response(
             MODEL_MAP["default"],
-            build_prompt(query, "default")
+            build_prompt(query, "default", context=memory)
         )
+
+        save_memory(query, fallback)
+        return fallback

@@ -111,3 +111,27 @@ tools/
 services/
  ├── context_builder.py
 '''
+
+
+#PHASE 3 — MEMORY + PERSONALIZATION + SELF-LEARNING
+'''
+✅ Long-term memory (FAISS)
+✅ Conversation memory
+✅ User preferences tracking
+✅ Context-aware personalization
+✅ Self-improving responses
+
+User Query
+   ↓
+Memory Retriever 🔥
+   ↓
+Search (if needed)
+   ↓
+Context Builder
+   ↓
+Multi-Model Pipeline
+   ↓
+Response
+   ↓
+Memory Storage (learn)
+'''
