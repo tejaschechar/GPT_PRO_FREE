@@ -74,188 +74,199 @@ save user preferences
 
 ✔ Persistent memory (RAG)
 
-🧰 PHASE 4 — Tools Layer (Day 4)
-🎯 Goal:
 
-AI can take actions
+=========================================================================
 
-✅ Tasks:
 
-Create:
+🧠 🚀 7-DAY BUILD PLAN (AUTONOMOUS AGENT SYSTEM)
+🎯 Goal
 
-tools/python_exec.py
-tools/file_reader.py
-tools/system_tools.py
-Tools:
-Python execution
-File reader
-System commands
-✅ Output:
+Transform:
 
-✔ AI can execute tasks
+Router-based LLM system ❌
+into
+Multi-agent autonomous graph system ✅
 
-🤖 PHASE 5 — Agent System (Day 5–6)
-🎯 Goal:
+🟢 PHASE 1 — CORE RESTRUCTURE (Day 1)
+🎯 Objective:
 
-AI thinks step-by-step
+Convert your current monolithic router into modular architecture
 
-✅ Tasks:
-Install:
-pip install langgraph
-Create:
-agents/planner.py
-agents/researcher.py
-agents/critic.py
-agents/graph.py
+Tasks:
+Create folder structure (agents / graph / tools / memory)
+Move logic from route_query() into modules
+Introduce state.py
 Build:
-Planner → decide steps
-Researcher → call tools
-Critic → validate answer
-✅ Output:
+graph/state.py
+graph/agent_graph.py
+main.py
+Output:
 
-✔ Autonomous agent system
+✔ Clean separation of concerns
+✔ No more single giant router function
 
-🔥 PHASE 6 — UNIQUE FEATURES (Day 7–8)
-🎯 Goal:
+🟡 PHASE 2 — PLANNER AGENT (Day 2)
+🎯 Objective:
 
-Make your project stand out
+Add reasoning decomposition
 
-🧠 Feature 1 — Self-Improving AI
-Tasks:
-store:
-bad answers
-corrected answers
-retrieve in future prompts
-👁️ Feature 2 — Thought Visibility
-Tasks:
-track agent steps
-show in UI
-⚡ Feature 3 — Automation Engine
-Tasks:
-user → “do X daily”
-store job
-run via scheduler
-✅ Output:
-
-✔ Unique AI system
-
-🖥️ PHASE 7 — UI (Day 9)
-🎯 Goal:
-
-ChatGPT-like interface
-
-✅ Tasks:
-
-Create:
-
-ui/streamlit_app.py
+Build:
+agents/planner.py
 Features:
-chat UI
-file upload
-toggle:
-memory
-thoughts
-✅ Output:
+Convert query → step-by-step plan
+Output JSON steps
+Upgrade:
 
-✔ Usable product
+Instead of:
 
-🧪 PHASE 8 — Testing & Evaluation (Day 10)
-🎯 Goal:
+"Explain AI"
 
-Make it robust
+Now:
 
-✅ Tasks:
-test queries
-measure:
-accuracy
-latency
-log outputs
-BONUS:
+[
+  "Define AI",
+  "Explain types",
+  "Give examples"
+]
+Output:
 
-Use MLflow
+✔ Task decomposition intelligence
 
-✅ Output:
+🟡 PHASE 3 — EXECUTOR LOOP (Day 3)
+🎯 Objective:
 
-✔ Reliable system
+Execute plan step-by-step
 
-📦 PHASE 9 — Production Packaging (Day 11–12)
-🎯 Goal:
+Build:
+agents/executor.py
+context accumulation system
+Flow:
+Plan → Step 1 → Step 2 → Step 3 → Context Build
+Output:
 
-Make it “hireable”
+✔ Multi-step reasoning system
 
-✅ Tasks:
-Dockerize:
-Dockerfile
-docker-compose.yml
+🟠 PHASE 4 — TOOL SYSTEM (Day 4)
+🎯 Objective:
+
+Make AI take actions
+
+Build:
+tools/tool_router.py
+tools/math_solver.py
+tools/search_tool.py
+tools/python_exec.py
+Upgrade:
+
+AI can now:
+
+solve math
+search web context
+execute logic
+Output:
+
+✔ Tool-augmented intelligence
+
+🔴 PHASE 5 — CRITIC LOOP (Day 5)
+🎯 Objective:
+
+Self-evaluation + improvement
+
+Build:
+agents/critic.py
 Add:
-logging
-configs
-environment variables
-✅ Output:
+scoring system (1–10)
+fallback regeneration
+Flow:
+Answer → Critic → Score → Improve (if low)
+Output:
 
-✔ Production-ready project
+✔ Self-correcting AI
 
-🌍 PHASE 10 — Deployment (Optional but 🔥)
-🎯 Goal:
+🔵 PHASE 6 — MEMORY SYSTEM (Day 6)
+🎯 Objective:
 
-Showcase project
+Make AI remember everything
 
-Options:
-Local demo (minimum)
-Cloud (AWS EC2)
-✅ Output:
+Build:
+memory/memory_manager.py
+memory/vector_memory.py (optional upgrade)
+Features:
+store Q/A pairs
+retrieve similar queries
+inject memory into context
+Output:
 
-✔ Live system (resume boost ×10)
+✔ Long-term intelligent assistant
 
-📁 FINAL PROJECT STRUCTURE
-neuradesk/
-│
-├── agents/
-├── tools/
-├── memory/
-├── llm/
-├── ui/
-├── app/
-├── configs/
-├── tests/
-├── Dockerfile
-└── README.md
-🧠 EXECUTION STRATEGY (IMPORTANT)
-❌ Don’t do this:
-Build everything together
-Jump phases
-✅ Do this:
+🟣 PHASE 7 — FULL AGENT GRAPH (Day 7)
+🎯 Objective:
 
-👉 One phase at a time:
+Combine everything into autonomous loop
 
-Build
-Test
-Improve
-Move ahead
-🚀 HOW WE WILL WORK TOGETHER
+Build:
+graph/agent_graph.py
+FINAL FLOW:
+User Query
+   ↓
+Planner Agent
+   ↓
+Executor Loop
+   ↓
+Tool Calls (if needed)
+   ↓
+Context Build
+   ↓
+Final Answer
+   ↓
+Critic Evaluation
+   ↓
+Improve (if needed)
+   ↓
+Memory Store
+   ↓
+Return Output
+🔥 FINAL SYSTEM CAPABILITIES
 
-We’ll go like this:
+After completion, your system will:
 
-👉 You say:
-“start phase 1”
+🧠 Think
+break problems into steps
+⚙️ Act
+use tools dynamically
+🔍 Verify
+self-evaluate answers
+🧠 Remember
+store past knowledge
+🔁 Improve
+loop until good answer
+🚀 BONUS (AFTER THIS PLAN)
 
-I give you:
+If you want next upgrade (MAANG-level):
 
-exact code
-folder structure
-debugging help
-
-Then:
-👉 “phase 2”
-👉 “phase 3”
-…until done
-
-💣 FINAL NOTE
-
-If you complete this properly:
-
-👉 This becomes:
-
-MAANG-level project
-startup idea
-portfolio highlight
+🔥 Phase 8 — Advanced Agent Swarm
+multiple planners
+debate system
+voting mechanism
+🔥 Phase 9 — Async Graph Engine
+parallel execution
+DAG-based flow
+🔥 Phase 10 — Production Layer
+FastAPI streaming
+Redis memory
+FAISS vector DB
+observability dashboard
+🧭 SIMPLE MIND MAP
+Router (you have now)
+   ↓
+Modular Agents (Phase 2–3)
+   ↓
+Tool System (Phase 4)
+   ↓
+Self-Critique Loop (Phase 5)
+   ↓
+Memory System (Phase 6)
+   ↓
+LangGraph-style Engine (Phase 7)
+   ↓
+Autonomous AI Agent System 🚀

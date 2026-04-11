@@ -1,1 +1,1 @@
-context_builder
+pip freeze > requirements.txt
